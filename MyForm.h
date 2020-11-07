@@ -289,8 +289,6 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 		newCircle->perimeter = newCircle->GetPerimeter();
 		myFigureList->InsertAtEnd(newCircle);
 
-
-		/*inicia dibujo de lista*/
 		if (!myFigureList->IsEmpty()) {
 			Node<FiguraGeometrica*>* temp = myFigureList->start;
 
@@ -301,14 +299,62 @@ private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e
 			}
 
 		}
-		/*Finaliza dibujo de lista*/
 
 		MessageBox::Show("Circulo insertado exitosamente, cantidad de elementos: " + myFigureList->count, "Insersión correcta", MessageBoxButtons::OK, MessageBoxIcon::Information);
 	}
 }
 private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
+	if ((textBox2->Text->Trim() != "") && (textBox3->Text->Trim() != ""))
+	{
+		FiguraGeometrica* newTriangle = new Triangle();
+		newTriangle->height = Convert::ToDouble(textBox3->Text);
+		newTriangle->width = Convert::ToDouble(textBox2->Text);
+		newTriangle->type = 2;
+		newTriangle->area = newTriangle->GetArea();
+		newTriangle->perimeter = newTriangle->GetPerimeter();
+		myFigureList->InsertAtEnd(newTriangle);
+
+		if (!myFigureList->IsEmpty())
+		{
+			Node<FiguraGeometrica*>* temp = myFigureList->start;
+
+			for (int i = 0; i < myFigureList->count; i++)
+			{
+				FiguraGeometrica* actual = temp->value;
+				DrawNode(pnlList->CreateGraphics(), i * 100, 20, actual->type, actual->area, actual->perimeter, actual->height, actual->width);
+				temp = temp->next;
+			}
+
+		}
+
+		MessageBox::Show("Triangulo insertado exitosamente, cantidad de elementos: " + myFigureList->count, "Insersión correcta", MessageBoxButtons::OK, MessageBoxIcon::Information);
+	}
 }
 private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e) {
+	if ((textBox4->Text->Trim() != "") && (textBox5->Text->Trim() != "")) {
+		FiguraGeometrica* newRectangle = new Triangle();
+		newRectangle->height = Convert::ToDouble(textBox4->Text);
+		newRectangle->width = Convert::ToDouble(textBox5->Text);
+		newRectangle->type = 3;
+		newRectangle->area = newRectangle->GetArea();
+		newRectangle->perimeter = newRectangle->GetPerimeter();
+		myFigureList->InsertAtEnd(newRectangle);
+
+
+		if (!myFigureList->IsEmpty()) {
+			Node<FiguraGeometrica*>* temp = myFigureList->start;
+
+			for (int i = 0; i < myFigureList->count; i++) {
+				FiguraGeometrica* actual = temp->value;
+				DrawNode(pnlList->CreateGraphics(), i * 100, 20, actual->type, actual->area, actual->perimeter, actual->height, actual->width);
+				temp = temp->next;
+			}
+
+		}
+
+
+		MessageBox::Show("Rectangulo insertado exitosamente, cantidad de elementos: " + myFigureList->count, "Insersión correcta", MessageBoxButtons::OK, MessageBoxIcon::Information);
+	}
 }
 	   void DrawNode(Graphics^ canvas, int posx, int posy, int type, double area, double perimeter, double height, double width) {
 		   Brush^ brush = gcnew SolidBrush(Color::Navy);
@@ -321,6 +367,13 @@ private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e
 			   canvas->FillEllipse(brush, RectangleF(posx, posy, width * 5, width * 5));
 		   }break;
 		   case 2: {
+			   PointF pun1 = PointF(posx, posy);
+			   PointF pun2 = PointF(posx, posy + height * 5);
+			   PointF pun3 = PointF(posx + width * 5, posy + height * 5);
+			   array<PointF>^ curvePoints = { pun1,pun2,pun3 };
+			   canvas->FillPolygon(brush, curvePoints);
+		   }break;
+		   case 3: {
 			   canvas->FillRectangle(brush, RectangleF(posx, posy, width * 5, height * 5));
 		   }break;
 		   default:
@@ -328,6 +381,7 @@ private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e
 		   }
 
 		   canvas->DrawString("Area: " + area, fuente, brushstring, posx + 1, posy + 20);
+		   canvas->DrawString("Perimetro: " + perimeter, fuente, brushstring, posx + 1, posy + 60);
 	   }
 };
 }
