@@ -1,4 +1,10 @@
 #pragma once
+#include "DoubleLink.h";
+#include "Node.h";
+#include "FiguraGeometrica.h";
+#include "Circle.h";
+#include "Rectangle.h";
+#include "Triangle.h";
 
 namespace Tarea6FranciscoPuga1183819 {
 
@@ -15,9 +21,11 @@ namespace Tarea6FranciscoPuga1183819 {
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
 	public:
+		DoubleLink<FiguraGeometrica*>* myFigureList;
 		MyForm(void)
 		{
 			InitializeComponent();
+			myFigureList = new DoubleLink<FiguraGeometrica*>();
 			//
 			//TODO: Add the constructor code here
 			//
@@ -226,6 +234,7 @@ namespace Tarea6FranciscoPuga1183819 {
 			this->button1->TabIndex = 2;
 			this->button1->Text = L"Insertar Circulo";
 			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
 			// 
 			// button2
 			// 
@@ -235,6 +244,7 @@ namespace Tarea6FranciscoPuga1183819 {
 			this->button2->TabIndex = 3;
 			this->button2->Text = L"Insertar Triangulo";
 			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
 			// 
 			// button3
 			// 
@@ -244,6 +254,7 @@ namespace Tarea6FranciscoPuga1183819 {
 			this->button3->TabIndex = 5;
 			this->button3->Text = L"Insertar Rectangulo";
 			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &MyForm::button3_Click);
 			// 
 			// MyForm
 			// 
@@ -256,6 +267,7 @@ namespace Tarea6FranciscoPuga1183819 {
 			this->Controls->Add(this->groupBox1);
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
+			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox1->PerformLayout();
 			this->groupBox2->ResumeLayout(false);
@@ -266,5 +278,56 @@ namespace Tarea6FranciscoPuga1183819 {
 
 		}
 #pragma endregion
-	};
+	private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
+	}
+private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
+	if (textBox1->Text->Trim() != "") {
+		FiguraGeometrica* newCircle = new Circle();
+		newCircle->width = Convert::ToDouble(textBox1->Text);
+		newCircle->type = 1;
+		newCircle->area = newCircle->GetArea();
+		newCircle->perimeter = newCircle->GetPerimeter();
+		myFigureList->InsertAtEnd(newCircle);
+
+
+		/*inicia dibujo de lista*/
+		if (!myFigureList->IsEmpty()) {
+			Node<FiguraGeometrica*>* temp = myFigureList->start;
+
+			for (int i = 0; i < myFigureList->count; i++) {
+				FiguraGeometrica* actual = temp->value;
+				DrawNode(pnlList->CreateGraphics(), i * 100, 20, actual->type, actual->area, actual->perimeter, actual->width, actual->width);
+				temp = temp->next;
+			}
+
+		}
+		/*Finaliza dibujo de lista*/
+
+		MessageBox::Show("Circulo insertado exitosamente, cantidad de elementos: " + myFigureList->count, "Insersión correcta", MessageBoxButtons::OK, MessageBoxIcon::Information);
+	}
+}
+private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+	   void DrawNode(Graphics^ canvas, int posx, int posy, int type, double area, double perimeter, double height, double width) {
+		   Brush^ brush = gcnew SolidBrush(Color::Navy);
+		   Brush^ brushstring = gcnew SolidBrush(Color::White);
+		   System::Drawing::Font^ fuente = gcnew System::Drawing::Font("Arial", 10, FontStyle::Bold);
+
+		   switch (type)
+		   {
+		   case 1: {
+			   canvas->FillEllipse(brush, RectangleF(posx, posy, width * 5, width * 5));
+		   }break;
+		   case 2: {
+			   canvas->FillRectangle(brush, RectangleF(posx, posy, width * 5, height * 5));
+		   }break;
+		   default:
+			   break;
+		   }
+
+		   canvas->DrawString("Area: " + area, fuente, brushstring, posx + 1, posy + 20);
+	   }
+};
 }
